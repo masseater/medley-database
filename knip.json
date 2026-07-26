@@ -3,7 +3,7 @@
   "workspaces": {
     ".": {
       "entry": ["scripts/*.ts"],
-      "project": ["src/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts"]
+      "project": ["src/**/*.ts", "scripts/**/*.ts", "tests/**/*.ts", "desktop/**/*.ts"]
     },
     "web": {
       "project": ["src/**/*.{ts,tsx}"]

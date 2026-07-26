@@ -8,6 +8,8 @@
     "dev": "concurrently -n server,web \"tsx watch src/server/index.ts\" \"pnpm -C web dev\"",
     "build": "pnpm -C web build",
     "start": "tsx src/server/index.ts",
+    "desktop": "tsx desktop/launch.ts",
+    "desktop:install": "powershell -NoProfile -ExecutionPolicy Bypass -File desktop/create-shortcut.ps1",
     "mcp": "tsx src/mcp/index.ts",
     "test": "vitest run",
     "knip": "knip",

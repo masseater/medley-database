@@ -13,6 +13,7 @@
 
 - **サーバー**: Hono + better-sqlite3（`src/server/`、`http://localhost:8765`）
 - **フロントエンド**: React + Vite + [smarthr-ui](https://smarthr.design/)（`web/`、ビルド済みをサーバーが配信）
+- **デスクトップ版**: OS 標準ブラウザのアプリモードを使う軽量ランチャー（`desktop/`）
 - **パッケージ管理**: pnpm（workspace: ルート + `web`）
 - **MCPサーバー**: stdio、同じ SQLite を直接読み書き（`src/mcp/`）
 - **DB**: `data/medley.db`（SQLite 1ファイル。バックアップはコピーするだけ。環境変数 `MEDLEY_DB` で変更可）
@@ -26,6 +27,30 @@ pnpm start   # http://localhost:8765 で起動
 ```
 
 開発時は `pnpm dev`（サーバー watch + Vite dev server :5173)。
+
+## デスクトップアプリとして使う
+
+```powershell
+pnpm desktop          # アプリウィンドウで起動
+pnpm desktop:install  # デスクトップ / スタートメニューにショートカットを作る
+```
+
+Electron のような追加ランタイムは**入れていない**（重いため）。代わりに
+
+1. Hono サーバーを同一プロセスで起動し
+2. Windows に標準搭載の Edge（無ければ Chrome）を「アプリモード」`--app` で開く
+
+という構成にしている。アドレスバーもタブも出ず、専用プロファイルを使うので普段の
+ブラウザ窓とは独立したウィンドウ・タスクバーアイコンになる。**ウィンドウを閉じると
+サーバーも一緒に終了する**。追加のディスク使用量は実質ゼロ。
+
+`pnpm desktop:install` で作られるショートカットは `desktop/medley-manager.vbs` を
+呼ぶので、起動時に黒いコンソール窓は出ない。アイコン（`desktop/medley-manager.ico`）は
+初回に自動生成される。
+
+補足: `desktop/medley-manager.vbs` と `desktop/create-shortcut.ps1` は **ASCII のみ**で
+書くこと。wscript / Windows PowerShell 5.1 はこれらをシステムコードページ（日本語環境では
+CP932）で読むため、UTF-8 の日本語コメントを入れるとスクリプトが壊れる。
 
 ```powershell
 pnpm test       # ユニットテスト（vitest、インメモリDB）
