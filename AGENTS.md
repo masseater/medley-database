@@ -1,22 +1,105 @@
-# AGENTS.md
+<!-- intent-skills:start -->
+## Skill Loading
 
-ニコメドと合作動画の素材管理アプリである。使い方、MCP のツール、データモデルは README.md にある。持ち主は Windows で動かしている。
+Use the repository’s installed Intent. If it is unavailable, report the missing dependency instead of downloading a replacement.
+Before editing files for a substantial task:
+- Run `pnpm exec intent list` from the workspace root to see available local skills.
+- If a listed skill matches the task, run `pnpm exec intent load <package>#<skill>` before changing files.
+- Use the loaded `SKILL.md` guidance while making the change.
+- Monorepos: when working across packages, run the skill check from the workspace root and prefer the local skill for the package being changed.
+- Multiple matches: prefer the most specific local skill for the package or concern you are changing; load additional skills only when the task spans multiple packages or concerns.
+<!-- intent-skills:end -->
+
+<!--VITE PLUS START-->
+
+# Using Vite+, the Unified Toolchain for the Web
+
+This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, and it invokes Vite through `vp dev` and `vp build`. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
+
+Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.dev/guide/.
+
+## Built-in Commands vs Scripts
+
+`vp <name>` runs a built-in command. `vp run <name>` runs a `package.json` script or a `vite.config.ts` task. Scripts cannot overwrite built-ins, so `vp dev` and `vp run dev` may do different things. Check `package.json` and `vite.config.ts` first, and run `vp run <name>` when the project defines a script or task with that name.
+
+## Tool Versions
+
+Run `vp toolchain` to show versions and relationships in the active Vite+
+release. Add a tool name to select part of the graph. For example, run
+`vp toolchain vite`. Use `--global` to ignore the local `vite-plus` package. Use
+`vp why <package>` to show the package-manager dependency graph.
+
+## Review Checklist
+
+- [ ] Run `vp install` after pulling remote changes and before getting started.
+- [ ] Run `vp check` and `vp test` to format, lint, type check and test changes.
+- [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
+- [ ] If setup, runtime, or package-manager behavior looks wrong, run `vp env doctor` and include its output when asking for help.
+
+<!--VITE PLUS END-->
 
 ## コマンド
 
-```sh
-pnpm test                               # vitest。MEDLEY_DB=:memory: で動く
-pnpm vitest run tests/queries.test.ts   # 1 ファイルだけ動かす
-pnpm typecheck                          # ルートと web/ の両方
-pnpm knip
-```
+- `vp run verify` は、ルートの `vp check` にテスト・ESLint・steiger・`db:check`・fallow・gitleaks・audit などの検査を束ねたタスクである。pre-push フックと Stop フックも同じ verify を走らせる。
+- `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
+- テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
+- D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを `drizzle/` に作る。better-auth のテーブルは `vp run auth:generate` で生成する。
 
-変更したら上の 3 つを通す。
+## 構成
 
-## つくり
+- `apps/web` は TanStack Start のアプリである。`alchemy.run.ts` が D1 と Worker を定義し、Cloudflare にデプロイする。
+- API は Elysia で書く。`src/app/routes/api.$.ts` が `/api/*` を `src/app/server/api.server.ts` のルーターに渡す。各スライスは `index.server.ts` から出したルートを、そのルーターに足す。
+- クライアントは `shared/api` で Eden の型から TanStack Query のクエリを作る。SSR 中は HTTP を通らず、`createIsomorphicFn` でルートの `handle` を直接呼ぶ。
 
-- DB への読み書きはすべて `src/db/queries.ts` にあり、Web の API（`src/server/app.ts`）と MCP サーバー（`src/mcp/index.ts`）がこれを共有する。同じ SQLite のファイルを両方が直接開く。
-- `src/db/schema.sql` は起動のたびに流れる。既存のテーブルに列を足すときは、schema.sql に加えて `db.ts` の `migrate()` にも `ensureColumn` を足す。
-- データを入れるのは MCP だけで、Web UI からの書き込みはコメントの 2 つの PATCH だけにする。
-- 動画の `url` は必須である。`ref_video_title` から自動で作るスタブには `urn:medley-manager:unknown` が入り、後で `update_video` で実際の URL に置き換える。
-- `desktop/medley-manager.vbs` と `desktop/create-shortcut.ps1` は ASCII だけで書く。Windows の wscript と PowerShell 5.1 が CP932 で読むからである。
+## データ
+
+- いまは閲覧だけを提供する。書き込みは、持ち主だけが使えるリモート MCP で足す予定である。
+
+## 環境変数
+
+- 環境変数は環境ごとに変わる値だけにする。変わらない値はコードか Alchemy の設定に、ツールにフラグがあればフラグにする。
+
+## Cloudflare
+
+- Workers Paid プランを前提にする。
+- ゾーンの WAF カスタムルールと Logpush のジョブは、masseater.dev ゾーンの持ち主の masseater/masseater.dev だけが持つ。ほかのリポは `OWNED_ZONE` を入れない。
+- Worker にはすべて `logpush: true` を付ける。
+- Bot Fight Mode は使わない。
+
+## ライブラリ
+
+- ライブラリが型を提供する値は、その型のまま `Schema.decode*` に渡す。
+- ライブラリが export する型・スキーマ・enum・定数を書き写さない。
+- 外部 API のクライアントは手で包まず、Effect 公式のパッケージ、distilled.cloud（Cloudflare は `@distilled.cloud/cloudflare`）、公開 OpenAPI から `@effect/openapi-generator` で生成、の順に選ぶ。
+
+## PR とマージ
+
+- PR のレビュー、PR ごとの CI・動作検証・デプロイはしない。動作は本番で確かめる。
+- マージ前に base を取り込み、手元の `vp run verify` を通してから自分でマージする。マージしてよいかは聞かない。ルールセットのバイパスや `--admin` は使わない。
+- release-please のリリース PR は `verify` を手動実行して作り直す。`up-to-date` が承認待ちで取り込むものも無ければ、ユーザーに承認を頼む。
+
+## oxlint-plugin-decision
+
+- 有料の decider は、無料の `openrouter/respan/span-01-lite` で判定できないルールだけに使う。判定できるかは、正解の分かる違反例と違反でない例を、キャッシュを消して `OXLINT_DECISION_EXPLAIN=json` で確かめる。
+- ルールが使うモデルは、ユーザーの指示なしに変えない。
+- 確信できるものだけを違反にする。取りこぼしは許容し、閾値を下げて拾いにいかない。
+
+## 計測
+
+- 推測せず計測する。実装や修正の前に本番で事実を確かめ、その結果だけで判断する。
+- 機能開発の前に、AI が自分でデバッグできる仕組み（再現手段、ログやスパン、それを読む経路）を作る。
+- 時間かお金を使う処理はすべてスパンにする。Workers 以外は `OtlpTracer.layerFromConfig` で出す。計測のためだけにコマンドやプロセスを包まない。
+- ワークフローの最後には `.github/scripts/ci-telemetry.sh` を動かすジョブを置く。
+
+## 脆弱性
+
+- ZAP のアラートは警告も含めすぐ直す。誤検知だけを `.github/zap/rules.tsv` に書く。
+- `audit` は `vp pm audit --fix` で直す。修正版の無い勧告だけを `auditConfig.ignoreGhsas` に載せ、理由をコミットメッセージに書く。
+
+## 公開先
+
+- デプロイ先や外部公開しているもの（サイト、API、npm パッケージなど）があれば、その URL を README に一覧で載せる。
+
+## スキル
+
+- 複数リポで使う自作スキルは masseater/skills に置き、skills CLI で入れる。

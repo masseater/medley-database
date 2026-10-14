@@ -1,0 +1,17 @@
+import type { ReactNode } from "react";
+
+import { VideoListItem } from "./video-list-item";
+import type { VideoSummary } from "./video-list-item";
+
+const VideoList = <Item extends VideoSummary>({
+  videos,
+  describe,
+}: Readonly<{ videos: readonly Item[]; describe: (item: Item) => string }>): ReactNode => (
+  <ul className="flex flex-col divide-y">
+    {videos.map((item) => (
+      <VideoListItem key={item.id} video={item} detail={describe(item)} />
+    ))}
+  </ul>
+);
+
+export { VideoList };
