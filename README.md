@@ -1,42 +1,33 @@
 # medley-manager
 
-ニコメド（ニコニコメドレー）や合作動画で、どの曲や動画が素材として使われたかを記録し、逆引きするサービスである。
-ある曲を使ったメドレーや合作を、引用をたどった間接的な使用まで含めて探せる。ある動画を引用している動画も探せる。
+ニコメド（ニコニコメドレー）や合作動画で、どの曲や動画が素材として使われたかを逆引きできるサービスである。
+ある曲を使ったメドレーや合作を、別の動画を引用した間接的な使用まで含めて探せる。
 
 ## 公開先
 
 - Web: https://medley-manager.masseater.dev
-- MCP: https://medley-manager.masseater.dev/mcp
+- MCP（持ち主の書き込み用）: https://medley-manager.masseater.dev/mcp
 
-## セットアップ
+## 使い方
+
+ログインは要らず、Web の URL を開けば誰でも見られる。
+
+上部の検索欄に曲・動画・担当者の名前を入れて探す。
+曲のページには、その曲を直接使った動画と、引用を経由して使った動画が並ぶ。
+動画のページには、その動画を引用している動画が並ぶ。
+担当者のページでは、その人がどの動画のどのパートを担当したかが分かる。
+
+記録の追加や修正は、持ち主だけが MCP から行う。
+
+## 手元で動かす
+
+[Vite+](https://viteplus.dev/guide/) の `vp` コマンドと、Cloudflare のアカウントが要る。
 
 ```sh
+vp env on
 vp install
-cp .env.example .env
 vp exec --filter web alchemy profile edit --add Cloudflare
-vp run verify
+cd apps/web && vp run dev
 ```
 
-Cloudflare の認証情報は環境変数ではなく Alchemy のプロファイル（`~/.alchemy`）で管理する。
-デプロイと `.mcp.json` の Cloudflare MCP は、どちらもこのプロファイルの認証情報を使う。
-
-## 環境変数
-
-ルートの `.env` に書く。
-
-| 名前                 | 用途                                            |
-| -------------------- | ----------------------------------------------- |
-| `OPENROUTER_API_KEY` | `vp check` で走る oxlint-plugin-decision の判定 |
-
-## GitHub の設定
-
-Actions の secrets、Actions による PR 作成の許可、PR を作れる人の制限、既定ブランチのルールセットを gh で設定する。
-手順は `setup-template` スキル（[masseater/skills](https://github.com/masseater/skills)）にある。
-
-## 起動とデプロイ
-
-```sh
-cd apps/web
-vp run dev
-vp run deploy
-```
+dev が表示した URL を開くと画面が出る。手元のデータベースは本番と別で、最初は空である。
