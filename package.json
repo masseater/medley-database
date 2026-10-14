@@ -1,34 +1,73 @@
 {
   "name": "medley-manager",
-  "version": "0.1.0",
+  "version": "0.0.10",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.15.1",
   "scripts": {
-    "dev": "concurrently -n server,web \"tsx watch src/server/index.ts\" \"pnpm -C web dev\"",
-    "build": "pnpm -C web build",
-    "start": "tsx src/server/index.ts",
-    "desktop": "tsx desktop/launch.ts",
-    "desktop:install": "powershell -NoProfile -ExecutionPolicy Bypass -File desktop/create-shortcut.ps1",
-    "mcp": "tsx src/mcp/index.ts",
-    "test": "vitest run",
-    "knip": "knip",
-    "typecheck": "tsc --noEmit && pnpm -C web typecheck"
-  },
-  "dependencies": {
-    "@hono/node-server": "^1.13.7",
-    "@modelcontextprotocol/sdk": "^1.12.0",
-    "better-sqlite3": "^11.8.1",
-    "hono": "^4.6.16",
-    "zod": "^3.24.1"
+    "markdown-lint": "textlint \"**/*.md\" && git ls-files -co --exclude-standard '*.md' | git -c core.excludesFile=.textlintignore check-ignore --no-index --stdin -nv | awk '$1 == \"::\" { print $2 }' | xargs -r -n 1 -P 4 python3 \"$(skills ls --json | jq -r '.[] | select(.name == \"yomiyasu\").path')/scripts/yomiyasu_lint.py\" --strict",
+    "renovate": "renovate-config-validator --strict",
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dead-code --no-production --fail-on-issues --quiet --format compact && fallow dead-code --no-production --quiet --format json | jq -e '[.prop_drilling_chains, .thin_wrappers, .duplicate_prop_shapes] | all(length == 0)' > /dev/null && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "prepare": "vp config && skills experimental_install --force"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.12",
-    "@types/node": "^22.10.5",
-    "concurrently": "^9.1.2",
-    "knip": "^6.27.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "vitest": "^4.1.10"
+    "@ast-grep/cli": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@effect/tsgo": "catalog:stack",
+    "@eslint-react/eslint-plugin": "catalog:",
+    "@eslint/config-helpers": "catalog:",
+    "@html-eslint/eslint-plugin-react": "catalog:",
+    "@r_masseater/oxlint-plugin-decision": "catalog:",
+    "@shadcn/lint": "catalog:",
+    "@tanstack/eslint-plugin-query": "catalog:",
+    "@tanstack/eslint-plugin-router": "catalog:",
+    "@tanstack/eslint-plugin-start": "catalog:",
+    "@tanstack/intent": "catalog:",
+    "@textlint-ja/textlint-rule-preset-ai-writing": "1.7.0",
+    "@types/node": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-baseline-js": "catalog:",
+    "eslint-plugin-drizzle": "catalog:",
+    "eslint-plugin-no-comments": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "fallow": "catalog:stack",
+    "renovate": "catalog:stack",
+    "skills": "catalog:",
+    "syncpack": "catalog:",
+    "textlint": "catalog:stack",
+    "textlint-rule-preset-ja-technical-writing": "12.0.2",
+    "vite-plus": "catalog:stack"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.10.1",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=26.0.0"
+  },
+  "intent": {
+    "skills": [
+      "@tanstack/devtools-vite",
+      "@tanstack/react-start",
+      "drizzle-kit",
+      "@tanstack/devtools",
+      "@tanstack/devtools-event-client",
+      "@tanstack/match-sorter-utils",
+      "@tanstack/router-core",
+      "@tanstack/start-client-core",
+      "@tanstack/virtual-file-routes",
+      "@tanstack/router-plugin",
+      "@tanstack/start-server-core",
+      "fallow"
+    ]
   }
 }
