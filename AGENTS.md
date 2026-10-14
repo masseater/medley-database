@@ -53,7 +53,7 @@ release. Add a tool name to select part of the graph. For example, run
 
 ## データ
 
-- いまは閲覧だけを提供する。書き込みは、持ち主だけが使えるリモート MCP で足す予定である。
+- Web は閲覧だけを提供する。書き込みは `/mcp` のリモート MCP で行い、OAuth でログインできるのはサインアップを閉じた better-auth に登録した持ち主だけである。
 
 ## 環境変数
 

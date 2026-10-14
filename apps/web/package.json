@@ -21,8 +21,11 @@
   },
   "dependencies": {
     "@better-auth/drizzle-adapter": "1.7.7",
+    "@better-auth/mcp": "catalog:",
+    "@better-auth/oauth-provider": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
+    "@modelcontextprotocol/server": "catalog:",
     "@tanstack/react-devtools": "0.10.13",
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-query-devtools": "catalog:",
