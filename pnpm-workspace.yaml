@@ -37,6 +37,9 @@ catalog:
   "@tanstack/intent": 0.5.5
   "@yarnpkg/parsers": 3.1.0
   jose: 6.2.12
+  "@better-auth/mcp": 1.7.7
+  "@better-auth/oauth-provider": 1.7.7
+  "@modelcontextprotocol/server": 2.3.1
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.13
@@ -93,6 +96,7 @@ packageExtensions:
     dependencies:
       "@steiger/toolkit": 0.2.3
 patchedDependencies:
+  "@better-auth/oauth-provider@1.7.7": patches/@better-auth__oauth-provider@1.7.7.patch
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-plugin-decision@0.0.4"

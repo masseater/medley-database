@@ -6,6 +6,7 @@
 ## 公開先
 
 - Web: https://medley-manager.masseater.dev
+- MCP: https://medley-manager.masseater.dev/mcp
 
 ## セットアップ
 
