@@ -1,6 +1,17 @@
-import { Effect, Option } from "effect";
+import { Array, Effect, Number, Option, Order, pipe } from "effect";
 
 import { catalogDb } from "./db.server";
+
+const byLocale = Order.make<string>((self, that) => Number.sign(self.localeCompare(that)));
+
+type Credit = Readonly<{
+  part: Readonly<{ position: number; video: Readonly<{ title: string }> }>;
+}>;
+
+const byVideoThenPosition = Order.combine(
+  Order.mapInput(byLocale, ({ part }: Credit) => part.video.title),
+  Order.mapInput(Order.Number, ({ part }: Credit) => part.position),
+);
 
 const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
   const found = Option.fromUndefinedOr(
@@ -30,12 +41,11 @@ const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
     Option.map((person) => ({
       id: person.id,
       name: person.name,
-      aliases: person.aliases.map(({ alias }) => alias),
-      credits: person.credits.toSorted(
-        (left, right) =>
-          left.part.video.title.localeCompare(right.part.video.title) ||
-          left.part.position - right.part.position,
+      aliases: pipe(
+        person.aliases,
+        Array.map(({ alias }) => alias),
       ),
+      credits: Array.sort(person.credits, byVideoThenPosition),
     })),
   );
 });

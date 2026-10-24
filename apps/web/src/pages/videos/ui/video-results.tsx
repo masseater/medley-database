@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { VideoList, catalogQueries } from "#/entities/catalog";
@@ -10,7 +11,7 @@ const describe = ({
   uploader,
   partCount,
 }: Readonly<{ uploader: string | null; partCount: number }>): string =>
-  [uploader ?? "", `${partCount.toString()} パート`].filter(Boolean).join("・");
+  pipe([uploader ?? "", `${partCount.toString()} パート`], Array.filter(Boolean), Array.join("・"));
 
 const VideoResults = (): ReactNode => {
   const filter = route.useSearch();

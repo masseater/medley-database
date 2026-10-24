@@ -1,6 +1,6 @@
 import { and, countDistinct, eq, like, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
-import { Effect, Option } from "effect";
+import { Array, Effect, Option, pipe } from "effect";
 
 import { part } from "#/entities/catalog/model/part.table";
 import type { VideoFilter } from "#/entities/catalog/model/video-search";
@@ -51,8 +51,16 @@ const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: Vide
     ],
     { concurrency: "unbounded" },
   );
-  const parts = new Map(counts.map((row) => [row.videoId, row.parts]));
-  return videos.map((row) => Object.assign(row, { partCount: parts.get(row.id) ?? NO_ROWS }));
+  const parts = new Map(
+    pipe(
+      counts,
+      Array.map((row) => [row.videoId, row.parts]),
+    ),
+  );
+  return pipe(
+    videos,
+    Array.map((row) => Object.assign(row, { partCount: parts.get(row.id) ?? NO_ROWS })),
+  );
 });
 
 export { listVideos };

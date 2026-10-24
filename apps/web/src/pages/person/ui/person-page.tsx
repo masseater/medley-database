@@ -1,4 +1,4 @@
-import { Array as Arr } from "effect";
+import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { usePerson } from "#/pages/person/api/use-person";
@@ -11,7 +11,7 @@ const PersonPage = (): ReactNode => {
     <div className="flex flex-col gap-8">
       <h1 className="text-2xl font-bold">{person.name}</h1>
       {Arr.isReadonlyArrayNonEmpty(person.aliases) && (
-        <p className="text-muted-foreground text-sm">{`別名義: ${person.aliases.join("、")}`}</p>
+        <p className="text-muted-foreground text-sm">{`別名義: ${pipe(person.aliases, Arr.join("、"))}`}</p>
       )}
       <CreditsTable />
     </div>

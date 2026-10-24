@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe, Struct } from "effect";
 
 import type { SongDetail } from "#/entities/catalog";
 import { catalogDb, getSong, part, song, songAlias } from "#/entities/catalog/index.server";
@@ -43,7 +43,7 @@ const updateSong = Effect.fn("mcp.song.update")(function* updateSong(
   input: typeof UpdateSongInput.Type,
 ) {
   const { id, ...patch } = input;
-  if (Arr.isReadonlyArrayNonEmpty(Object.keys(patch))) {
+  if (Arr.isReadonlyArrayNonEmpty(Struct.keys(patch))) {
     yield* query(() => catalogDb.update(song).set(patch).where(eq(song.id, id)));
   }
   return yield* songDetail(id);
@@ -76,7 +76,7 @@ const removeSongAlias = Effect.fn("mcp.song.alias.remove")(function* removeSongA
 
 const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(input: typeof MergeInput.Type) {
   if (input.sourceId === input.targetId) {
-    return yield* new ToolError({ message: SAME_SONG });
+    return yield* ToolError.make({ message: SAME_SONG });
   }
   const source = yield* songDetail(input.sourceId);
   yield* songDetail(input.targetId);

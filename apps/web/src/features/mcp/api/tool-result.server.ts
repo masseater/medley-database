@@ -25,7 +25,7 @@ const messageOf = (cause: unknown): string =>
   );
 
 const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, ToolError> =>
-  Effect.tryPromise({ try: run, catch: (cause) => new ToolError({ message: messageOf(cause) }) });
+  Effect.tryPromise({ try: run, catch: (cause) => ToolError.make({ message: messageOf(cause) }) });
 
 const orMissing =
   (missing: string) =>
@@ -35,7 +35,7 @@ const orMissing =
     effect.pipe(
       Effect.flatMap(
         Option.match({
-          onNone: () => Effect.fail(new ToolError({ message: missing })),
+          onNone: () => Effect.fail(ToolError.make({ message: missing })),
           onSome: (value) => Effect.succeed(value),
         }),
       ),

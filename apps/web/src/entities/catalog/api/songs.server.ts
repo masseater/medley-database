@@ -1,9 +1,13 @@
 import { countDistinct, isNotNull } from "drizzle-orm";
-import { Effect, Option } from "effect";
+import { Array, Effect, Option, Order, pipe } from "effect";
 
 import { part } from "#/entities/catalog/model/part.table";
 
 import { NO_ROWS, catalogDb, containing } from "./db.server";
+
+const byUsesDescending = Order.flip(
+  Order.mapInput(Order.Number, ({ useCount }: Readonly<{ useCount: number }>) => useCount),
+);
 
 const listSongs = Effect.fn("catalog.songs")(function* listSongs(keyword: Option.Option<string>) {
   const where = keyword.pipe(
@@ -37,10 +41,17 @@ const listSongs = Effect.fn("catalog.songs")(function* listSongs(keyword: Option
     ],
     { concurrency: "unbounded" },
   );
-  const uses = new Map(counts.map((row) => [row.songId, row.uses]));
-  return songs
-    .map((song) => Object.assign(song, { useCount: uses.get(song.id) ?? NO_ROWS }))
-    .toSorted((left, right) => right.useCount - left.useCount);
+  const uses = new Map(
+    pipe(
+      counts,
+      Array.map((row) => [row.songId, row.uses]),
+    ),
+  );
+  return pipe(
+    songs,
+    Array.map((song) => Object.assign(song, { useCount: uses.get(song.id) ?? NO_ROWS })),
+    (rows) => Array.sort(rows, byUsesDescending),
+  );
 });
 
 export { listSongs };

@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option } from "effect";
+import { Array as Arr, Effect, Number, Option, Order, pipe, Record } from "effect";
 
 import { catalogDb } from "./db.server";
 import { quoteReach, sourcesByVideo, videoSummaries } from "./quote-reach.server";
@@ -31,35 +31,41 @@ type DirectUse = VideoSummary & Readonly<{ parts: readonly UsedPart[] }>;
 
 type IndirectUse = VideoSummary & Readonly<{ via: readonly VideoSummary[] }>;
 
-const byTitle = (left: VideoSummary, right: VideoSummary): number =>
-  left.title.localeCompare(right.title);
+const byTitle = Order.make<VideoSummary>((left, right) =>
+  Number.sign(left.title.localeCompare(right.title)),
+);
 
 const byVideo = (parts: readonly UsedPart[]): readonly DirectUse[] =>
-  Object.values(Arr.groupBy(parts, (used) => used.video.id.toString()))
-    .map((uses): DirectUse => {
+  pipe(
+    Record.values(Arr.groupBy(parts, (used) => used.video.id.toString())),
+    Arr.map((uses): DirectUse => {
       const { video } = Arr.headNonEmpty(uses);
       return { id: video.id, title: video.title, kind: video.kind, parts: uses };
-    })
-    .toSorted(byTitle);
+    }),
+    (uses) => Arr.sort(uses, byTitle),
+  );
 
 const indirectUsage = (reach: readonly QuotePair[]): Effect.Effect<readonly IndirectUse[]> =>
   videoSummaries(reach.flat()).pipe(
-    Effect.map((summaries) =>
-      [...sourcesByVideo(reach)]
-        .flatMap(([videoId, sources]) =>
-          Option.toArray(Option.fromUndefinedOr(summaries.get(videoId))).map(
-            (quoting): IndirectUse => ({
+    Effect.map((summaries) => {
+      const summaryOf = (videoId: number): readonly VideoSummary[] =>
+        Option.toArray(Option.fromUndefinedOr(summaries.get(videoId)));
+      return pipe(
+        [...sourcesByVideo(reach)],
+        Arr.flatMap(([videoId, sources]) =>
+          pipe(
+            summaryOf(videoId),
+            Arr.map((quoting): IndirectUse => ({
               id: quoting.id,
               title: quoting.title,
               kind: quoting.kind,
-              via: sources.flatMap((source) =>
-                Option.toArray(Option.fromUndefinedOr(summaries.get(source))),
-              ),
-            }),
+              via: pipe(sources, Arr.flatMap(summaryOf)),
+            })),
           ),
-        )
-        .toSorted(byTitle),
-    ),
+        ),
+        (uses) => Arr.sort(uses, byTitle),
+      );
+    }),
   );
 
 const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
@@ -69,9 +75,12 @@ const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
   }
   const song = found.value;
   const direct = byVideo(song.parts);
-  const indirect = yield* quoteReach(direct.map((use) => use.id)).pipe(
-    Effect.flatMap(indirectUsage),
-  );
+  const indirect = yield* quoteReach(
+    pipe(
+      direct,
+      Arr.map((use) => use.id),
+    ),
+  ).pipe(Effect.flatMap(indirectUsage));
   return Option.some({
     id: song.id,
     title: song.title,
@@ -79,7 +88,10 @@ const getSong = Effect.fn("catalog.song")(function* getSong(id: number) {
     url: song.url,
     genre: song.genre,
     note: song.note,
-    aliases: song.aliases.map(({ alias }) => alias),
+    aliases: pipe(
+      song.aliases,
+      Arr.map(({ alias }) => alias),
+    ),
     direct,
     indirect,
   });

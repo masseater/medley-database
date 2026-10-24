@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { PART_COLUMN_LABEL } from "#/entities/catalog/lib/part-columns";
@@ -9,9 +10,10 @@ import { TableRow } from "#/shared/ui/table-row";
 const PartsHeader = ({ columns }: Readonly<{ columns: readonly PartColumn[] }>): ReactNode => (
   <TableHeader>
     <TableRow>
-      {columns.map((column) => (
-        <TableHead key={column}>{PART_COLUMN_LABEL[column]}</TableHead>
-      ))}
+      {pipe(
+        columns,
+        Array.map((column) => <TableHead key={column}>{PART_COLUMN_LABEL[column]}</TableHead>),
+      )}
     </TableRow>
   </TableHeader>
 );

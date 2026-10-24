@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { PersonLink } from "#/entities/catalog";
@@ -9,9 +10,10 @@ const FoundPeople = (): ReactNode => {
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">{`担当者（${people.length.toString()}）`}</h2>
       <div className="flex flex-col gap-2">
-        {people.map((person) => (
-          <PersonLink key={person.id} id={person.id} name={person.name} />
-        ))}
+        {pipe(
+          people,
+          Array.map((person) => <PersonLink key={person.id} id={person.id} name={person.name} />),
+        )}
       </div>
     </section>
   );

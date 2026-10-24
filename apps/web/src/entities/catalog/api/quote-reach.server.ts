@@ -1,5 +1,5 @@
 import { inArray } from "drizzle-orm";
-import { Array as Arr, Effect } from "effect";
+import { Array as Arr, Effect, pipe } from "effect";
 
 import type { VideoKind } from "#/entities/catalog/lib/video-kind";
 import { part } from "#/entities/catalog/model/part.table";
@@ -51,18 +51,23 @@ const sourcesByVideo = (pairs: readonly QuotePair[]): ReadonlyMap<number, readon
 
 const nextFrontier = (state: Expansion, rows: readonly QuoteRow[]): readonly QuotePair[] => {
   const frontier = sourcesByVideo(state.frontier);
-  const known = new Set(state.reached.map(pairKey));
+  const known = new Set(pipe(state.reached, Arr.map(pairKey)));
   const sources = new Set(state.sources);
-  const candidates = rows
-    .filter((row) => !sources.has(row.videoId))
-    .flatMap((row) =>
-      (frontier.get(row.refVideoId ?? NO_VIDEO) ?? NO_SOURCES).map((source): QuotePair => [
-        row.videoId,
-        source,
-      ]),
-    );
+  const candidates = pipe(
+    rows,
+    Arr.filter((row) => !sources.has(row.videoId)),
+    Arr.flatMap((row) =>
+      pipe(
+        frontier.get(row.refVideoId ?? NO_VIDEO) ?? NO_SOURCES,
+        Arr.map((source): QuotePair => [row.videoId, source]),
+      ),
+    ),
+  );
   return Arr.dedupeWith(
-    candidates.filter((pair) => !known.has(pairKey(pair))),
+    pipe(
+      candidates,
+      Arr.filter((pair) => !known.has(pairKey(pair))),
+    ),
     (left, right) => pairKey(left) === pairKey(right),
   );
 };
@@ -71,7 +76,12 @@ const expand = (state: Expansion): Effect.Effect<readonly QuotePair[]> => {
   if (Arr.isReadonlyArrayEmpty(state.frontier) || state.depth > MAX_QUOTE_DEPTH) {
     return Effect.succeed(state.reached);
   }
-  return quotingRows(state.frontier.map(([videoId]) => videoId)).pipe(
+  return quotingRows(
+    pipe(
+      state.frontier,
+      Arr.map(([videoId]) => videoId),
+    ),
+  ).pipe(
     Effect.map((rows) => nextFrontier(state, rows)),
     Effect.flatMap((frontier) =>
       expand({
@@ -87,7 +97,10 @@ const expand = (state: Expansion): Effect.Effect<readonly QuotePair[]> => {
 const quoteReach = (sources: readonly number[]): Effect.Effect<readonly QuotePair[]> =>
   expand({
     sources,
-    frontier: sources.map((id): QuotePair => [id, id]),
+    frontier: pipe(
+      sources,
+      Arr.map((id): QuotePair => [id, id]),
+    ),
     reached: [],
     depth: FIRST_DEPTH,
   }).pipe(Effect.withSpan("catalog.quotes"));
@@ -106,7 +119,15 @@ const videoSummaries = (
       ),
     { concurrency: "unbounded" },
   ).pipe(
-    Effect.map((chunks) => new Map(Arr.flatten(chunks).map((row) => [row.id, row]))),
+    Effect.map(
+      (chunks) =>
+        new Map(
+          pipe(
+            Arr.flatten(chunks),
+            Arr.map((row) => [row.id, row]),
+          ),
+        ),
+    ),
     Effect.withSpan("catalog.quotes.titles"),
   );
 

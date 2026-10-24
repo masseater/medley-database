@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect";
+import { Effect, Record, Schema } from "effect";
 
 import { authClient } from "#/shared/auth";
 
@@ -8,7 +8,7 @@ const Credentials = Schema.Struct({ email: Schema.String, password: Schema.Strin
 
 const signIn = (form: Readonly<FormData>): Promise<unknown> =>
   Effect.runPromise(
-    Schema.decodeUnknownEffect(Credentials)(Object.fromEntries(form)).pipe(
+    Schema.decodeUnknownEffect(Credentials)(Record.fromEntries(form)).pipe(
       Effect.flatMap((credentials) =>
         Effect.promise(() =>
           authClient.signIn.email({

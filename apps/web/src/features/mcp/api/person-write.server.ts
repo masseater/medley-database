@@ -24,7 +24,7 @@ const mergePeople = Effect.fn("mcp.person.merge")(function* mergePeople(
   input: typeof MergeInput.Type,
 ) {
   if (input.sourceId === input.targetId) {
-    return yield* new ToolError({ message: SAME_PERSON });
+    return yield* ToolError.make({ message: SAME_PERSON });
   }
   const source = yield* personDetail(input.sourceId);
   yield* personDetail(input.targetId);

@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { catalogQueries } from "#/entities/catalog";
@@ -20,9 +21,10 @@ const PeopleTable = (): ReactNode => {
     <Table>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
-        {people.map((person) => (
-          <PersonRow key={person.id} person={person} />
-        ))}
+        {pipe(
+          people,
+          Array.map((person) => <PersonRow key={person.id} person={person} />),
+        )}
       </TableBody>
     </Table>
   );

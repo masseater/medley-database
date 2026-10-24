@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Array, Option, pipe } from "effect";
 
 import { formatTime } from "#/entities/catalog";
 
@@ -11,11 +11,19 @@ const usedAt = (part: UsedAt): string =>
   });
 
 const describeDirect = ({ parts }: Readonly<{ parts: readonly UsedAt[] }>): string =>
-  parts.map((part) => usedAt(part)).join("、");
+  pipe(
+    parts,
+    Array.map((part) => usedAt(part)),
+    Array.join("、"),
+  );
 
 const describeIndirect = ({
   via,
 }: Readonly<{ via: readonly Readonly<{ title: string }>[] }>): string =>
-  `${via.map((source) => source.title).join("、")} 経由`;
+  `${pipe(
+    via,
+    Array.map((source) => source.title),
+    Array.join("、"),
+  )} 経由`;
 
 export { describeDirect, describeIndirect };

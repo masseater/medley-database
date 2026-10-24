@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Struct } from "effect";
+import { Array as Arr, Effect, Number, Option, Order, pipe, Struct } from "effect";
 
 import { catalogDb } from "./db.server";
 
@@ -13,6 +13,10 @@ const VIDEO_COLUMNS = {
   note: true,
   comment: true,
 } as const;
+
+const byTitle = Order.make<Readonly<{ title: string }>>((left, right) =>
+  Number.sign(left.title.localeCompare(right.title)),
+);
 
 const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
   const found = Option.fromUndefinedOr(
@@ -54,10 +58,12 @@ const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
     Option.map(
       Struct.evolve({
         quotedBy: (quotes) =>
-          Arr.dedupeWith(
-            quotes.map((quote) => quote.video),
-            (left, right) => left.id === right.id,
-          ).toSorted((left, right) => left.title.localeCompare(right.title)),
+          pipe(
+            quotes,
+            Arr.map((quote) => quote.video),
+            Arr.dedupeWith((left, right) => left.id === right.id),
+            (videos) => Arr.sort(videos, byTitle),
+          ),
       }),
     ),
   );

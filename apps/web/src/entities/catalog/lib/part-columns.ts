@@ -1,4 +1,5 @@
 import type { Option } from "effect";
+import { Array, pipe } from "effect";
 
 import type { PartStartLink } from "./watch-url";
 
@@ -48,7 +49,10 @@ const PART_COLUMN_LABEL: Readonly<Record<PartColumn, string>> = {
 };
 
 const hasCredit = (part: PartRow, role: StaffRole): boolean =>
-  part.staff.some((credit) => credit.role === role);
+  pipe(
+    part.staff,
+    Array.some((credit) => credit.role === role),
+  );
 
 const PRESENT: Readonly<Record<PartColumn, (part: PartRow) => boolean>> = {
   position: () => true,
@@ -75,7 +79,15 @@ const COLUMN_ORDER: readonly PartColumn[] = [
 ];
 
 const visibleColumns = (parts: readonly PartRow[]): readonly PartColumn[] =>
-  COLUMN_ORDER.filter((column) => parts.some((part) => PRESENT[column](part)));
+  pipe(
+    COLUMN_ORDER,
+    Array.filter((column) =>
+      pipe(
+        parts,
+        Array.some((part) => PRESENT[column](part)),
+      ),
+    ),
+  );
 
 export type { Credit, Named, PartColumn, PartLine, PartRow, StaffRole };
 export { PART_COLUMN_LABEL, visibleColumns };

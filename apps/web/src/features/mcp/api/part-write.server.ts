@@ -1,5 +1,5 @@
 import { and, eq, max } from "drizzle-orm";
-import { Array as Arr, Boolean, Effect, Option, Struct, pipe } from "effect";
+import { Array as Arr, Boolean, Effect, Option, pipe, Struct } from "effect";
 
 import type { VideoDetail } from "#/entities/catalog";
 import { catalogDb, getVideo, part, partStaff } from "#/entities/catalog/index.server";
@@ -100,7 +100,7 @@ const insertPart = Effect.fn("mcp.part.insert")(function* insertPart(
   const material = yield* materialOf(placed.input);
   const fields = Struct.pick(placed.input, PART_FIELDS);
   if (material.songId === null && material.refVideoId === null && !("label" in fields)) {
-    return yield* new ToolError({ message: NO_MATERIAL });
+    return yield* ToolError.make({ message: NO_MATERIAL });
   }
   const created = yield* query(() =>
     catalogDb
@@ -178,7 +178,7 @@ const updatePart = Effect.fn("mcp.part.update")(function* updatePart(
     orMissing(PART_MISSING),
   );
   const patch = { ...Struct.pick(input, PART_FIELDS), ...(yield* changedMaterial(input)) };
-  if (Arr.isReadonlyArrayNonEmpty(Object.keys(patch))) {
+  if (Arr.isReadonlyArrayNonEmpty(Struct.keys(patch))) {
     yield* query(() => catalogDb.update(part).set(patch).where(eq(part.id, input.partId)));
   }
   yield* replaceAllStaff(input.partId, input);

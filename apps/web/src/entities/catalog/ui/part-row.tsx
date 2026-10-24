@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import type { PartColumn, PartLine } from "#/entities/catalog/lib/part-columns";
@@ -10,9 +11,10 @@ const PartRow = ({
   columns,
 }: Readonly<{ line: PartLine; columns: readonly PartColumn[] }>): ReactNode => (
   <TableRow>
-    {columns.map((column) => (
-      <PartCell key={column} column={column} line={line} />
-    ))}
+    {pipe(
+      columns,
+      Array.map((column) => <PartCell key={column} column={column} line={line} />),
+    )}
   </TableRow>
 );
 
