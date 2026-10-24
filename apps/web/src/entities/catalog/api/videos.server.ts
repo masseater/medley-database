@@ -37,6 +37,7 @@ const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: Vide
             kind: video.kind,
             uploader: video.uploader,
             publishedAt: video.publishedAt,
+            thumbnailUrl: video.thumbnailUrl,
           })
           .from(video)
           .where(and(keywordCondition(filter), kindCondition(filter)))

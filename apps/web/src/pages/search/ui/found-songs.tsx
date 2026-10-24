@@ -1,20 +1,22 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/catalog";
 import { useSearchResults } from "#/pages/search/api/use-search-results";
+import { SectionHeading } from "#/shared/ui/section-heading";
+
+import { SongPill } from "./song-pill";
 
 const FoundSongs = (): ReactNode => {
   const { songs } = useSearchResults();
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">{`曲（${songs.length.toString()}）`}</h2>
-      <div className="flex flex-col gap-2">
+      <SectionHeading title="曲" count={songs.length} />
+      <ul className="flex flex-wrap gap-2">
         {pipe(
           songs,
-          Array.map((song) => <SongLink key={song.id} id={song.id} title={song.title} />),
+          Array.map((song) => <SongPill key={song.id} song={song} />),
         )}
-      </div>
+      </ul>
     </section>
   );
 };

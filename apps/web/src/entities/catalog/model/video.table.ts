@@ -10,6 +10,7 @@ const video = sqliteTable("video", {
   url: text().notNull(),
   uploader: text(),
   publishedAt: text("published_at"),
+  thumbnailUrl: text("thumbnail_url"),
   note: text(),
   comment: text(),
 });

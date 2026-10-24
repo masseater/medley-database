@@ -1,20 +1,22 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { PersonLink } from "#/entities/catalog";
 import { useSearchResults } from "#/pages/search/api/use-search-results";
+import { SectionHeading } from "#/shared/ui/section-heading";
+
+import { PersonPill } from "./person-pill";
 
 const FoundPeople = (): ReactNode => {
   const { people } = useSearchResults();
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">{`担当者（${people.length.toString()}）`}</h2>
-      <div className="flex flex-col gap-2">
+      <SectionHeading title="担当者" count={people.length} />
+      <ul className="flex flex-wrap gap-2">
         {pipe(
           people,
-          Array.map((person) => <PersonLink key={person.id} id={person.id} name={person.name} />),
+          Array.map((person) => <PersonPill key={person.id} person={person} />),
         )}
-      </div>
+      </ul>
     </section>
   );
 };

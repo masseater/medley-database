@@ -8,7 +8,7 @@ const VideoList = <Item extends VideoSummary>({
   videos,
   describe,
 }: Readonly<{ videos: readonly Item[]; describe: (item: Item) => string }>): ReactNode => (
-  <ul className="flex flex-col divide-y">
+  <ul className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
     {pipe(
       videos,
       Array.map((item) => <VideoListItem key={item.id} video={item} detail={describe(item)} />),

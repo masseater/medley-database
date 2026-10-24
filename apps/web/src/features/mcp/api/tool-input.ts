@@ -43,6 +43,9 @@ const MergeInput = Schema.Struct({
   targetId: Id.annotate({ description: "残す側の ID" }),
 });
 
+const THUMBNAIL_URL_DESCRIPTION =
+  "サムネイル画像の URL。ニコニコ動画は https://ext.nicovideo.jp/api/getthumbinfo/<動画ID> の thumbnail_url、YouTube は https://i.ytimg.com/vi/<動画ID>/mqdefault.jpg";
+
 const CreateVideoInput = Schema.Struct({
   title: Schema.NonEmptyString,
   kind: Schema.optionalKey(Kind),
@@ -52,6 +55,7 @@ const CreateVideoInput = Schema.Struct({
   videoId: Text.annotate({ description: "sm12345678 や YouTube の ID。省略すると URL から取る" }),
   uploader: Text,
   publishedAt: Text.annotate({ description: "投稿日（YYYY-MM-DD）" }),
+  thumbnailUrl: Text.annotate({ description: THUMBNAIL_URL_DESCRIPTION }),
   note: Text,
 });
 const UpdateVideoInput = Schema.Struct({
@@ -62,6 +66,7 @@ const UpdateVideoInput = Schema.Struct({
   url: Schema.optionalKey(Schema.NonEmptyString),
   uploader: ClearableText,
   publishedAt: ClearableText,
+  thumbnailUrl: ClearableText.annotate({ description: THUMBNAIL_URL_DESCRIPTION }),
   note: ClearableText,
   comment: ClearableText.annotate({ description: "持ち主のメモ。null で消す" }),
 });

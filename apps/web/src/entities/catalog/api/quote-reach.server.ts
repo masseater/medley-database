@@ -17,7 +17,12 @@ type Expansion = Readonly<{
   depth: number;
 }>;
 
-type VideoSummary = Readonly<{ id: number; title: string; kind: VideoKind }>;
+type VideoSummary = Readonly<{
+  id: number;
+  title: string;
+  kind: VideoKind;
+  thumbnailUrl: string | null;
+}>;
 
 const D1_MAX_PARAMS = 90;
 const MAX_QUOTE_DEPTH = 10;
@@ -113,7 +118,7 @@ const videoSummaries = (
     (chunk) =>
       Effect.promise(() =>
         catalogDb.query.video.findMany({
-          columns: { id: true, title: true, kind: true },
+          columns: { id: true, title: true, kind: true, thumbnailUrl: true },
           where: { id: { in: [...chunk] } },
         }),
       ),

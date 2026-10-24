@@ -1,15 +1,18 @@
 import type { ReactNode } from "react";
 
-import { RecentVideos } from "./recent-videos";
-import { StatGrid } from "./stat-grid";
-
-const TITLE = "ニコメド管理";
+import { FeaturedVideos } from "./featured-videos";
+import { Hero } from "./hero";
+import { PeopleRanking } from "./people-ranking";
+import { SongRanking } from "./song-ranking";
 
 const HomePage = (): ReactNode => (
-  <div className="flex flex-col gap-8">
-    <h1 className="text-2xl font-bold">{TITLE}</h1>
-    <StatGrid />
-    <RecentVideos />
+  <div className="flex flex-col gap-12">
+    <Hero />
+    <FeaturedVideos />
+    <div className="grid gap-6 md:grid-cols-2">
+      <SongRanking />
+      <PeopleRanking />
+    </div>
   </div>
 );
 

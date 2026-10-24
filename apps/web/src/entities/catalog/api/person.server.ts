@@ -27,7 +27,7 @@ const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
                 columns: { id: true, position: true, label: true },
                 with: {
                   song: { columns: { id: true, title: true } },
-                  video: { columns: { id: true, title: true, kind: true } },
+                  video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } },
                 },
               },
             },

@@ -12,6 +12,8 @@ type WatchTarget = Readonly<{ target: Watchable; start: Option.Option<number> }>
 
 type PartStartLink = Readonly<{ label: string; href: Option.Option<string> }>;
 
+type VideoSource = Readonly<{ site: "niconico" | "youtube"; id: string }>;
+
 const startSuffix = (separator: string, start: Option.Option<number>): string =>
   Option.match(start, {
     onNone: () => "",
@@ -39,6 +41,26 @@ const watchUrl = (watch: WatchTarget): Option.Option<string> =>
     Option.orElse(() => registeredUrl(watch)),
   );
 
+const videoSource = (target: Watchable): Option.Option<VideoSource> =>
+  Option.fromNullOr(target.videoId).pipe(
+    Option.filter((id) => NICONICO_ID.test(id)),
+    Option.map((id): VideoSource => ({ site: "niconico", id })),
+    Option.orElse(() =>
+      Option.fromNullOr(target.videoId).pipe(
+        Option.filter((id) => YOUTUBE_ID.test(id) && target.url.includes("youtu")),
+        Option.map((id): VideoSource => ({ site: "youtube", id })),
+      ),
+    ),
+  );
+
+const EMBED_BASE: Readonly<Record<VideoSource["site"], string>> = {
+  niconico: "https://embed.nicovideo.jp/watch/",
+  youtube: "https://www.youtube-nocookie.com/embed/",
+};
+
+const embedUrl = (target: Watchable): Option.Option<string> =>
+  videoSource(target).pipe(Option.map((source) => `${EMBED_BASE[source.site]}${source.id}`));
+
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
   const rest = Math.floor(seconds % SECONDS_PER_MINUTE);
@@ -57,4 +79,4 @@ const partStart = ({
   );
 
 export type { PartStartLink, Watchable, WatchTarget };
-export { formatTime, partStart, watchUrl };
+export { embedUrl, formatTime, partStart, watchUrl };
