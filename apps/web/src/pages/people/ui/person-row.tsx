@@ -11,7 +11,7 @@ const PersonRow = ({ person }: Readonly<{ person: PersonSummary }>): ReactNode =
     <TableCell>
       <PersonLink id={person.id} name={person.name} />
     </TableCell>
-    <TableCell>{person.creditCount}</TableCell>
+    <TableCell variant="count">{`${person.creditCount.toString()} パート`}</TableCell>
   </TableRow>
 );
 

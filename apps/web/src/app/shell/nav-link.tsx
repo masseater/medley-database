@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 const ALL = {};
-const ACTIVE = { className: "text-foreground" };
+const ACTIVE = { className: "bg-secondary text-foreground" };
 
 const NavLink = ({
   to,
@@ -11,7 +11,7 @@ const NavLink = ({
   <Link
     to={to}
     search={ALL}
-    className="text-muted-foreground hover:text-foreground text-sm"
+    className="text-muted-foreground hover:bg-secondary hover:text-foreground rounded-full px-3 py-1.5 text-sm font-bold transition-colors"
     activeProps={ACTIVE}
   >
     {label}

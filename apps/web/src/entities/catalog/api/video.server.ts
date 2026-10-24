@@ -10,6 +10,7 @@ const VIDEO_COLUMNS = {
   url: true,
   uploader: true,
   publishedAt: true,
+  thumbnailUrl: true,
   note: true,
   comment: true,
 } as const;
@@ -47,7 +48,7 @@ const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
           },
           quotedBy: {
             columns: { id: true },
-            with: { video: { columns: { id: true, title: true, kind: true } } },
+            with: { video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } } },
           },
         },
         where: { id },

@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
 
-import { PartsTable } from "#/entities/catalog";
 import { useVideo } from "#/pages/video/api/use-video";
+import { SectionHeading } from "#/shared/ui/section-heading";
+
+import { VideoSetlist } from "./video-setlist";
 
 const VideoParts = (): ReactNode => {
   const video = useVideo();
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">{`パート（${video.parts.length.toString()}）`}</h2>
-      <PartsTable source={video} parts={video.parts} />
+      <SectionHeading title="セトリ" count={video.parts.length} />
+      <VideoSetlist />
     </section>
   );
 };

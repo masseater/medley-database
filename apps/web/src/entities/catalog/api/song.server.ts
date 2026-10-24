@@ -12,7 +12,7 @@ const findSong = Effect.fn("catalog.song.find")(function* findSong(id: number) {
         aliases: { columns: { alias: true } },
         parts: {
           columns: { id: true, position: true, startSec: true },
-          with: { video: { columns: { id: true, title: true, kind: true } } },
+          with: { video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } } },
           orderBy: { position: "asc" },
         },
       },
@@ -40,7 +40,13 @@ const byVideo = (parts: readonly UsedPart[]): readonly DirectUse[] =>
     Record.values(Arr.groupBy(parts, (used) => used.video.id.toString())),
     Arr.map((uses): DirectUse => {
       const { video } = Arr.headNonEmpty(uses);
-      return { id: video.id, title: video.title, kind: video.kind, parts: uses };
+      return {
+        id: video.id,
+        title: video.title,
+        kind: video.kind,
+        thumbnailUrl: video.thumbnailUrl,
+        parts: uses,
+      };
     }),
     (uses) => Arr.sort(uses, byTitle),
   );
@@ -59,6 +65,7 @@ const indirectUsage = (reach: readonly QuotePair[]): Effect.Effect<readonly Indi
               id: quoting.id,
               title: quoting.title,
               kind: quoting.kind,
+              thumbnailUrl: quoting.thumbnailUrl,
               via: pipe(sources, Arr.flatMap(summaryOf)),
             })),
           ),

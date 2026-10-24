@@ -1,12 +1,16 @@
 import type { ReactNode } from "react";
 
-const OPEN_ORIGINAL = "原曲を開く";
+import { Button } from "#/shared/ui/button";
+
+const OPEN_ORIGINAL = "原曲を開く ↗";
 
 const OriginalLink = ({ url }: Readonly<{ url: string | null }>): ReactNode =>
   url !== null && (
-    <a href={url} target="_blank" rel="noreferrer" className="text-sm hover:underline">
-      {OPEN_ORIGINAL}
-    </a>
+    <Button asChild variant="outline">
+      <a href={url} target="_blank" rel="noreferrer">
+        {OPEN_ORIGINAL}
+      </a>
+    </Button>
   );
 
 export { OriginalLink };
