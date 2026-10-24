@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { usePerson } from "#/pages/person/api/use-person";
@@ -15,9 +16,12 @@ const CreditsTable = (): ReactNode => {
     <Table>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
-        {credits.map((credit) => (
-          <CreditRow key={`${credit.part.id.toString()}-${credit.role}`} credit={credit} />
-        ))}
+        {pipe(
+          credits,
+          Array.map((credit) => (
+            <CreditRow key={`${credit.part.id.toString()}-${credit.role}`} credit={credit} />
+          )),
+        )}
       </TableBody>
     </Table>
   );

@@ -1,5 +1,5 @@
 import { and, eq, isNull } from "drizzle-orm";
-import { Array as Arr, Effect, Option } from "effect";
+import { Array as Arr, Effect, Option, Struct } from "effect";
 
 import type { VideoDetail } from "#/entities/catalog";
 import { catalogDb, getVideo, part, video } from "#/entities/catalog/index.server";
@@ -52,7 +52,7 @@ const updateVideo = Effect.fn("mcp.video.update")(function* updateVideo(
 ) {
   const { id, ...fields } = input;
   const patch = { ...fields, ...derivedVideoId(input) };
-  if (Arr.isReadonlyArrayNonEmpty(Object.keys(patch))) {
+  if (Arr.isReadonlyArrayNonEmpty(Struct.keys(patch))) {
     yield* query(() => catalogDb.update(video).set(patch).where(eq(video.id, id)));
   }
   return yield* videoDetail(id);

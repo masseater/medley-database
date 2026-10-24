@@ -1,4 +1,5 @@
 import { getRouteApi } from "@tanstack/react-router";
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { VIDEO_KINDS } from "#/entities/catalog";
@@ -12,10 +13,18 @@ const KindFilter = (): ReactNode => {
   const { kind: current } = route.useSearch();
   return (
     <nav className="flex flex-wrap gap-2" aria-label="種類">
-      <AllKindsLink selected={!VIDEO_KINDS.some((kind) => kind === current)} />
-      {VIDEO_KINDS.map((kind) => (
-        <KindFilterLink key={kind} kind={kind} selected={kind === current} />
-      ))}
+      <AllKindsLink
+        selected={
+          !pipe(
+            VIDEO_KINDS,
+            Array.some((kind) => kind === current),
+          )
+        }
+      />
+      {pipe(
+        VIDEO_KINDS,
+        Array.map((kind) => <KindFilterLink key={kind} kind={kind} selected={kind === current} />),
+      )}
     </nav>
   );
 };

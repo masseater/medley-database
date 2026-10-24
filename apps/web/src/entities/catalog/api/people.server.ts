@@ -1,9 +1,13 @@
 import { countDistinct } from "drizzle-orm";
-import { Effect, Option } from "effect";
+import { Array, Effect, Option, Order, pipe } from "effect";
 
 import { partStaff } from "#/entities/catalog/model/part.table";
 
 import { NO_ROWS, catalogDb, containing } from "./db.server";
+
+const byCreditsDescending = Order.flip(
+  Order.mapInput(Order.Number, ({ creditCount }: Readonly<{ creditCount: number }>) => creditCount),
+);
 
 const listPeople = Effect.fn("catalog.people")(function* listPeople(
   keyword: Option.Option<string>,
@@ -37,10 +41,19 @@ const listPeople = Effect.fn("catalog.people")(function* listPeople(
     ],
     { concurrency: "unbounded" },
   );
-  const credits = new Map(counts.map((row) => [row.personId, row.credits]));
-  return people
-    .map((person) => Object.assign(person, { creditCount: credits.get(person.id) ?? NO_ROWS }))
-    .toSorted((left, right) => right.creditCount - left.creditCount);
+  const credits = new Map(
+    pipe(
+      counts,
+      Array.map((row) => [row.personId, row.credits]),
+    ),
+  );
+  return pipe(
+    people,
+    Array.map((person) =>
+      Object.assign(person, { creditCount: credits.get(person.id) ?? NO_ROWS }),
+    ),
+    (rows) => Array.sort(rows, byCreditsDescending),
+  );
 });
 
 export { listPeople };

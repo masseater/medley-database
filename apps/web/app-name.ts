@@ -1,7 +1,7 @@
 import { Stack, isResourceOfType } from "alchemy";
 import { Rules, Zone } from "alchemy/Cloudflare";
 import { Secret } from "alchemy/Fly";
-import { Array as Arr, Effect, Match, Option, Schema } from "effect";
+import { Array as Arr, Effect, Match, Option, pipe, Record, Schema } from "effect";
 
 const APP_NAME = "medley-manager";
 
@@ -38,12 +38,15 @@ const requireAppPrefix = Effect.gen(function* requireAppPrefix() {
   const { name, resources } = yield* Stack;
   const offenders = [
     ...Arr.filter([`Stack: ${name}`], () => name !== APP_NAME && !name.startsWith(PREFIX)),
-    ...Object.values(resources).flatMap((resource) => describeUnprefixed(resource)),
+    ...pipe(
+      Record.values(resources),
+      Arr.flatMap((resource) => describeUnprefixed(resource)),
+    ),
   ];
   if (Arr.isReadonlyArrayNonEmpty(offenders)) {
     return yield* Effect.die(
       new Error(
-        `Alchemy のスタック名は "${APP_NAME}" か "${PREFIX}" で始まる名前、リソース名は "${PREFIX}"（Rules.List と Fly.Secret は "${ENV_PREFIX}"）で始める: ${offenders.join(", ")}`,
+        `Alchemy のスタック名は "${APP_NAME}" か "${PREFIX}" で始まる名前、リソース名は "${PREFIX}"（Rules.List と Fly.Secret は "${ENV_PREFIX}"）で始める: ${Arr.join(offenders, ", ")}`,
       ),
     );
   }

@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
@@ -18,16 +19,20 @@ const PartsTable = ({
   const columns = useMemo(() => visibleColumns(parts), [parts]);
   const lines = useMemo(
     (): readonly PartLine[] =>
-      parts.map((part) => ({ part, start: partStart({ source, startSec: part.startSec }) })),
+      pipe(
+        parts,
+        Array.map((part) => ({ part, start: partStart({ source, startSec: part.startSec }) })),
+      ),
     [parts, source],
   );
   return (
     <Table>
       <PartsHeader columns={columns} />
       <TableBody>
-        {lines.map((line) => (
-          <PartRow key={line.part.id} line={line} columns={columns} />
-        ))}
+        {pipe(
+          lines,
+          Array.map((line) => <PartRow key={line.part.id} line={line} columns={columns} />),
+        )}
       </TableBody>
     </Table>
   );

@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { catalogQueries } from "#/entities/catalog";
@@ -20,9 +21,10 @@ const SongsTable = (): ReactNode => {
     <Table>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
-        {songs.map((song) => (
-          <SongRow key={song.id} song={song} />
-        ))}
+        {pipe(
+          songs,
+          Array.map((song) => <SongRow key={song.id} song={song} />),
+        )}
       </TableBody>
     </Table>
   );

@@ -1,5 +1,9 @@
-import { Data } from "effect";
+import { Schema } from "effect";
 
-class ToolError extends Data.TaggedError("ToolError")<{ readonly message: string }> {}
+const taggedError = Schema.TaggedError;
+
+class ToolError extends taggedError<ToolError, { readonly brand: unique symbol }>()("ToolError", {
+  message: Schema.String,
+}) {}
 
 export { ToolError };

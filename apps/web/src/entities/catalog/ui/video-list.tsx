@@ -1,3 +1,4 @@
+import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { VideoListItem } from "./video-list-item";
@@ -8,9 +9,10 @@ const VideoList = <Item extends VideoSummary>({
   describe,
 }: Readonly<{ videos: readonly Item[]; describe: (item: Item) => string }>): ReactNode => (
   <ul className="flex flex-col divide-y">
-    {videos.map((item) => (
-      <VideoListItem key={item.id} video={item} detail={describe(item)} />
-    ))}
+    {pipe(
+      videos,
+      Array.map((item) => <VideoListItem key={item.id} video={item} detail={describe(item)} />),
+    )}
   </ul>
 );
 
