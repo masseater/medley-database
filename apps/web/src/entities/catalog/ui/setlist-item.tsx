@@ -11,7 +11,7 @@ const SetlistItem = ({
   part,
   start,
 }: Readonly<{ part: PartRow; start: Option.Option<PartStartLink> }>): ReactNode => (
-  <li className="bg-card hover:border-primary flex gap-3 rounded-lg border p-3 transition-colors sm:gap-4 sm:p-4">
+  <li className="hover:bg-muted flex gap-3 px-3 py-3 transition-colors sm:gap-4 sm:px-5">
     <PositionMark position={part.position} />
     <SetlistBody part={part} start={start} />
   </li>

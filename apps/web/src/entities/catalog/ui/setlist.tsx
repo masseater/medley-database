@@ -11,7 +11,7 @@ const Setlist = ({
   source,
   parts,
 }: Readonly<{ source: Watchable; parts: readonly PartRow[] }>): ReactNode => (
-  <ol className="grid gap-2 lg:grid-cols-2">
+  <ol className="bg-card flex flex-col divide-y overflow-hidden rounded-xl border">
     {pipe(
       parts,
       Array.map((part) => (

@@ -15,7 +15,7 @@ const markColor = (position: number): string =>
 
 const PositionMark = ({ position }: Readonly<{ position: number }>): ReactNode => (
   <span
-    className={`font-display text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-full text-sm ${markColor(position)}`}
+    className={`font-display text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-sm ${markColor(position)}`}
   >
     {position}
   </span>
