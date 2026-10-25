@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Number, Option, Order, pipe, Record } from "effect";
+import { Array as Arr, Effect, Number, Option, Order, pipe, Record, String as Str } from "effect";
 
 import { catalogDb } from "./db.server";
 import { quoteReach, sourcesByVideo, videoSummaries } from "./quote-reach.server";
@@ -32,7 +32,7 @@ type DirectUse = VideoSummary & Readonly<{ parts: readonly UsedPart[] }>;
 type IndirectUse = VideoSummary & Readonly<{ via: readonly VideoSummary[] }>;
 
 const byTitle = Order.make<VideoSummary>((left, right) =>
-  Number.sign(left.title.localeCompare(right.title)),
+  Number.sign(pipe(left.title, Str.localeCompare(right.title))),
 );
 
 const byVideo = (parts: readonly UsedPart[]): readonly DirectUse[] =>

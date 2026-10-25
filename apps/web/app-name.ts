@@ -1,13 +1,13 @@
 import { Stack, isResourceOfType } from "alchemy";
 import { Rules, Zone } from "alchemy/Cloudflare";
 import { Secret } from "alchemy/Fly";
-import { Array as Arr, Effect, Match, Option, pipe, Record, Schema } from "effect";
+import { Array as Arr, Effect, Match, Option, pipe, Record, Schema, String as Str } from "effect";
 
 const APP_NAME = "medley-manager";
 
 const PREFIX = `${APP_NAME}-`;
 
-const ENV_PREFIX = `${APP_NAME.replaceAll("-", "_")}_`;
+const ENV_PREFIX = `${pipe(APP_NAME, Str.replaceAll("-", "_"))}_`;
 
 const CI_TELEMETRY_AUDIENCE = `${PREFIX}ci-telemetry`;
 
@@ -29,7 +29,7 @@ const describeUnprefixed = (
   resource: Readonly<{ FQN: string; Props: unknown }>,
 ): readonly string[] =>
   decodeNamed(resource.Props).pipe(
-    Option.filter(({ name }) => !name.startsWith(prefixOf(resource))),
+    Option.filter(({ name }) => !pipe(name, Str.startsWith(prefixOf(resource)))),
     Option.map(({ name }) => `${resource.FQN}: ${name}`),
     Option.toArray,
   );
@@ -37,7 +37,10 @@ const describeUnprefixed = (
 const requireAppPrefix = Effect.gen(function* requireAppPrefix() {
   const { name, resources } = yield* Stack;
   const offenders = [
-    ...Arr.filter([`Stack: ${name}`], () => name !== APP_NAME && !name.startsWith(PREFIX)),
+    ...Arr.filter(
+      [`Stack: ${name}`],
+      () => name !== APP_NAME && !pipe(name, Str.startsWith(PREFIX)),
+    ),
     ...pipe(
       Record.values(resources),
       Arr.flatMap((resource) => describeUnprefixed(resource)),
