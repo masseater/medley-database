@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, pipe, String as Str } from "effect";
 
 const UNKNOWN_URL = "urn:medley-manager:unknown";
 const NICONICO_ID = /^(?:sm|nm|so)\d+$/u;
@@ -28,7 +28,7 @@ const niconicoUrl = ({ target, start }: WatchTarget): Option.Option<string> =>
 
 const youtubeUrl = ({ target, start }: WatchTarget): Option.Option<string> =>
   Option.fromNullOr(target.videoId).pipe(
-    Option.filter((id) => YOUTUBE_ID.test(id) && target.url.includes("youtu")),
+    Option.filter((id) => YOUTUBE_ID.test(id) && pipe(target.url, Str.includes("youtu"))),
     Option.map((id) => `https://www.youtube.com/watch?v=${id}${startSuffix("&t=", start)}`),
   );
 
@@ -47,7 +47,7 @@ const videoSource = (target: Watchable): Option.Option<VideoSource> =>
     Option.map((id): VideoSource => ({ site: "niconico", id })),
     Option.orElse(() =>
       Option.fromNullOr(target.videoId).pipe(
-        Option.filter((id) => YOUTUBE_ID.test(id) && target.url.includes("youtu")),
+        Option.filter((id) => YOUTUBE_ID.test(id) && pipe(target.url, Str.includes("youtu"))),
         Option.map((id): VideoSource => ({ site: "youtube", id })),
       ),
     ),
@@ -64,7 +64,7 @@ const embedUrl = (target: Watchable): Option.Option<string> =>
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
   const rest = Math.floor(seconds % SECONDS_PER_MINUTE);
-  return `${minutes.toString()}:${rest.toString().padStart(TIME_DIGITS, "0")}`;
+  return `${minutes.toString()}:${pipe(rest.toString(), Str.padStart(TIME_DIGITS, "0"))}`;
 };
 
 const partStart = ({

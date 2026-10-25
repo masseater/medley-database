@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Number, Option, Order, pipe, Struct } from "effect";
+import { Array as Arr, Effect, Number, Option, Order, pipe, String as Str, Struct } from "effect";
 
 import { catalogDb } from "./db.server";
 
@@ -16,7 +16,7 @@ const VIDEO_COLUMNS = {
 } as const;
 
 const byTitle = Order.make<Readonly<{ title: string }>>((left, right) =>
-  Number.sign(left.title.localeCompare(right.title)),
+  Number.sign(pipe(left.title, Str.localeCompare(right.title))),
 );
 
 const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {

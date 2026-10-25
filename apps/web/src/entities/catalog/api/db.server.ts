@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
-import { Option } from "effect";
+import { Option, String as Str } from "effect";
 
 import { catalogRelations } from "#/entities/catalog/model/relations";
 
@@ -12,7 +12,7 @@ const containing = (keyword: string): string => `%${keyword}%`;
 
 const keywordOf = (raw: string | undefined): Option.Option<string> =>
   Option.fromUndefinedOr(raw).pipe(
-    Option.map((value) => value.trim()),
+    Option.map((value) => Str.trim(value)),
     Option.filter((value) => value.length > NO_ROWS),
   );
 

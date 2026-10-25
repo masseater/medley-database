@@ -1,7 +1,7 @@
 import { adopt } from "alchemy/AdoptPolicy";
 import { AnalyticsEngine, Ruleset, Workers, Zone } from "alchemy/Cloudflare";
 import type { InferEnv } from "alchemy/Cloudflare";
-import { Array, Effect, pipe, Record } from "effect";
+import { Array, Effect, pipe, Record, String as Str } from "effect";
 
 import { APP_NAME } from "./app-name.ts";
 import { SCANNER_PROBES } from "./scanner-probes.ts";
@@ -55,7 +55,7 @@ const honeypot = Effect.fn("honeypot")(function* honeypot(
   compatibility: Readonly<{ date: string }>,
 ) {
   const HONEYPOT = yield* AnalyticsEngine.Dataset("Honeypot", {
-    dataset: `${APP_NAME.replaceAll("-", "_")}_honeypot`,
+    dataset: `${pipe(APP_NAME, Str.replaceAll("-", "_"))}_honeypot`,
   });
   return yield* Workers.Worker("Honeypot", {
     name: `${APP_NAME}-honeypot`,

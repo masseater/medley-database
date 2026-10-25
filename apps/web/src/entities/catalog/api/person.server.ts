@@ -1,8 +1,10 @@
-import { Array, Effect, Number, Option, Order, pipe } from "effect";
+import { Array, Effect, Number, Option, Order, pipe, String as Str } from "effect";
 
 import { catalogDb } from "./db.server";
 
-const byLocale = Order.make<string>((self, that) => Number.sign(self.localeCompare(that)));
+const byLocale = Order.make<string>((self, that) =>
+  Number.sign(pipe(self, Str.localeCompare(that))),
+);
 
 type Credit = Readonly<{
   part: Readonly<{ position: number; video: Readonly<{ title: string }> }>;
