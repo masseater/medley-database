@@ -44,7 +44,7 @@ catalog:
   "@fontsource/m-plus-rounded-1c": 5.3.0
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.15
+    "@distilled.cloud/cloudflare": 1.0.0-rc.16
     "@effect/atom-react": 4.0.5
     "@effect/tsgo": 0.56.0
     "@elysiajs/eden": 1.4.9
