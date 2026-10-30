@@ -1,5 +1,5 @@
 import { Stack, makeRandom } from "alchemy";
-import { D1, Rum, Website, Workers, providers, state } from "alchemy/Cloudflare";
+import { D1, Website, Workers, providers, state } from "alchemy/Cloudflare";
 import type { InferEnv } from "alchemy/Cloudflare";
 import { Config, Effect, Option, Schema } from "effect";
 
@@ -11,13 +11,13 @@ import { SITE_HOST } from "./src/shared/config/index.ts";
 const TRACE_SAMPLING_RATE = 0.1;
 
 const COMPATIBILITY = { date: "2026-08-25" } as const;
+const CF_BEACON_TOKEN = "ad561fe157a84abb89c547d547524e9f";
 
 const OWNED_ZONE = Option.none<string>();
 
 const web = Effect.gen(function* web() {
   const DB = yield* D1.Database("DB", { migrations: "./drizzle" });
   const BETTER_AUTH_SECRET = yield* makeRandom("BetterAuthSecret");
-  const { siteToken: CF_BEACON_TOKEN } = yield* Rum.Site("WebAnalytics", { host: SITE_HOST });
   return yield* Website.Vite("Web", {
     compatibility: COMPATIBILITY,
     logpush: true,
