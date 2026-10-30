@@ -11,6 +11,7 @@ import { SITE_HOST } from "./src/shared/config/index.ts";
 const TRACE_SAMPLING_RATE = 0.1;
 
 const COMPATIBILITY = { date: "2026-08-25" } as const;
+const CF_BEACON_TOKEN = "ad561fe157a84abb89c547d547524e9f";
 
 const OWNED_ZONE = Option.none<string>();
 
@@ -21,7 +22,7 @@ const web = Effect.gen(function* web() {
     compatibility: COMPATIBILITY,
     logpush: true,
     domain: SITE_HOST,
-    env: { BETTER_AUTH_SECRET, DB },
+    env: { BETTER_AUTH_SECRET, CF_BEACON_TOKEN, DB },
     observability: {
       enabled: true,
       logs: {

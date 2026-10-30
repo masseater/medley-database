@@ -1,6 +1,7 @@
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { Effect, Option } from "effect";
 
+import { withWebAnalytics } from "#/app/server/web-analytics.server";
 import { SEARCH_INDEX_ORIGIN } from "#/shared/config";
 
 const noindex = createMiddleware().server(({ next }) =>
@@ -15,11 +16,22 @@ const noindex = createMiddleware().server(({ next }) =>
   ),
 );
 
+const webAnalytics = createMiddleware().server(({ next }) =>
+  Effect.runPromise(
+    Effect.promise(() => Promise.resolve(next())).pipe(
+      Effect.map(({ response }) => withWebAnalytics(response)),
+    ),
+  ),
+);
+
 const startInstance = createStart(() => ({
-  requestMiddleware: Option.match(SEARCH_INDEX_ORIGIN, {
-    onNone: () => [noindex],
-    onSome: () => [],
-  }),
+  requestMiddleware: [
+    webAnalytics,
+    ...Option.match(SEARCH_INDEX_ORIGIN, {
+      onNone: () => [noindex],
+      onSome: () => [],
+    }),
+  ],
 }));
 
 export { startInstance };
