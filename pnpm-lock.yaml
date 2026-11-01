@@ -361,7 +361,7 @@ overrides:
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   minimatch@<11.0.1: ^11.0.1
 
-packageExtensionsChecksum: sha256-+VMdP1PtirSQ7Lhy8zZaF5Ha03FJIIM31JqoRyxSKXQ=
+packageExtensionsChecksum: sha256-UoeDPdVJlHAcCJ2gi51cFcqdMlCrOXaY2vq0XL5Rcuw=
 
 patchedDependencies:
   '@better-auth/oauth-provider@1.7.12': aa19ec7a555b383972e33a8241f992d164ff4241070a4ac57f7418560de8c006
