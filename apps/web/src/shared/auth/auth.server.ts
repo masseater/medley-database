@@ -26,6 +26,7 @@ import {
 import { adminPasskey } from "./passkey.server";
 
 const auth = betterAuth({
+  advanced: { database: { validateSchema: false } },
   baseURL: SITE_ORIGIN,
   database: drizzleAdapter(db, {
     provider: "sqlite",
