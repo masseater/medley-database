@@ -13,8 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DotwellKnownSplatRouteImport } from './routes/[.]well-known/$'
+import { Route as AdminRegisterRouteImport } from './routes/admin.register'
+import { Route as AdminSignInRouteImport } from './routes/admin.sign-in'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as McpConsentRouteImport } from './routes/mcp_.consent'
 import { Route as PeopleIndexRouteImport } from './routes/people.index'
@@ -44,14 +45,19 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DotwellKnownSplatRoute = DotwellKnownSplatRouteImport.update({
   id: '/.well-known/$',
   path: '/.well-known/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRegisterRoute = AdminRegisterRouteImport.update({
+  id: '/admin/register',
+  path: '/admin/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSignInRoute = AdminSignInRouteImport.update({
+  id: '/admin/sign-in',
+  path: '/admin/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -100,8 +106,9 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
-  '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/$': typeof ApiSplatRoute
   '/mcp/consent': typeof McpConsentRoute
   '/people/$id': typeof PeopleIdRoute
@@ -116,8 +123,9 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
-  '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/$': typeof ApiSplatRoute
   '/mcp/consent': typeof McpConsentRoute
   '/people/$id': typeof PeopleIdRoute
@@ -133,8 +141,9 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/search': typeof SearchRoute
-  '/sign-in': typeof SignInRoute
   '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/admin/register': typeof AdminRegisterRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/$': typeof ApiSplatRoute
   '/mcp_/consent': typeof McpConsentRoute
   '/people/$id': typeof PeopleIdRoute
@@ -151,8 +160,9 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/robots.txt'
     | '/search'
-    | '/sign-in'
     | '/.well-known/$'
+    | '/admin/register'
+    | '/admin/sign-in'
     | '/api/$'
     | '/mcp/consent'
     | '/people/$id'
@@ -167,8 +177,9 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/robots.txt'
     | '/search'
-    | '/sign-in'
     | '/.well-known/$'
+    | '/admin/register'
+    | '/admin/sign-in'
     | '/api/$'
     | '/mcp/consent'
     | '/people/$id'
@@ -183,8 +194,9 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/robots.txt'
     | '/search'
-    | '/sign-in'
     | '/.well-known/$'
+    | '/admin/register'
+    | '/admin/sign-in'
     | '/api/$'
     | '/mcp_/consent'
     | '/people/$id'
@@ -200,8 +212,9 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SearchRoute: typeof SearchRoute
-  SignInRoute: typeof SignInRoute
   DotwellKnownSplatRoute: typeof DotwellKnownSplatRoute
+  AdminRegisterRoute: typeof AdminRegisterRoute
+  AdminSignInRoute: typeof AdminSignInRoute
   ApiSplatRoute: typeof ApiSplatRoute
   McpConsentRoute: typeof McpConsentRoute
   PeopleIdRoute: typeof PeopleIdRoute
@@ -242,18 +255,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/.well-known/$': {
       id: '/.well-known/$'
       path: '/.well-known/$'
       fullPath: '/.well-known/$'
       preLoaderRoute: typeof DotwellKnownSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/register': {
+      id: '/admin/register'
+      path: '/admin/register'
+      fullPath: '/admin/register'
+      preLoaderRoute: typeof AdminRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/sign-in': {
+      id: '/admin/sign-in'
+      path: '/admin/sign-in'
+      fullPath: '/admin/sign-in'
+      preLoaderRoute: typeof AdminSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/$': {
@@ -320,8 +340,9 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SearchRoute: SearchRoute,
-  SignInRoute: SignInRoute,
   DotwellKnownSplatRoute: DotwellKnownSplatRoute,
+  AdminRegisterRoute: AdminRegisterRoute,
+  AdminSignInRoute: AdminSignInRoute,
   ApiSplatRoute: ApiSplatRoute,
   McpConsentRoute: McpConsentRoute,
   PeopleIdRoute: PeopleIdRoute,

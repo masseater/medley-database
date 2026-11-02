@@ -23,6 +23,7 @@ import {
   user,
   verification,
 } from "./generated/auth.table";
+import { adminPasskey } from "./passkey.server";
 
 const auth = betterAuth({
   baseURL: SITE_ORIGIN,
@@ -45,12 +46,12 @@ const auth = betterAuth({
     },
   }),
   disabledPaths: ["/token"],
-  emailAndPassword: { enabled: true, disableSignUp: true },
   plugins: [
     tanstackStartCookies(),
     jwt(),
+    adminPasskey,
     mcp({
-      loginPage: "/sign-in",
+      loginPage: "/admin/sign-in",
       consentPage: "/mcp/consent",
       resource: MCP_URL,
       scopes: ["openid", "profile", "offline_access"],
