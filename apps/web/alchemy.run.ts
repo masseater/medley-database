@@ -19,7 +19,7 @@ const web = Effect.gen(function* web() {
   const DB = yield* D1.Database("DB", { migrations: "./drizzle" });
   const BETTER_AUTH_SECRET = yield* makeRandom("BetterAuthSecret");
   return yield* Website.Vite("Web", {
-    compatibility: COMPATIBILITY,
+    compatibility: { ...COMPATIBILITY, flags: ["global_fetch_strictly_public"] },
     logpush: true,
     domain: SITE_HOST,
     env: { BETTER_AUTH_SECRET, CF_BEACON_TOKEN, DB },
