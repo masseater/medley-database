@@ -122,11 +122,6 @@ export default defineConfig({
           allow: [
             { from: "lib", name: "Request" },
             { from: "lib", name: "Response" },
-            {
-              from: "package",
-              package: "@cloudflare/workers-types",
-              name: "AnalyticsEngineDataset",
-            },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             { from: "package", package: "@modelcontextprotocol/server", name: "McpServer" },
             {
