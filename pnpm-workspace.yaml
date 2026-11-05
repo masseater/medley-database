@@ -76,7 +76,8 @@ overrides:
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   minimatch@<11.0.1: ^11.0.1
-  seroval@<1.6.11: ^1.6.11
+  seroval@<=1.6.7: ^1.6.8
+  seroval@>=1.5.5 <1.6.10: ^1.6.10
 peerDependencyRules:
   allowAny:
     - vite
