@@ -1,3 +1,4 @@
+import { requestSpan, serverFnSpan } from "@r_masseater/workers-tracing/tanstack-start";
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { Effect, Option } from "effect";
 
@@ -26,12 +27,14 @@ const webAnalytics = createMiddleware().server(({ next }) =>
 
 const startInstance = createStart(() => ({
   requestMiddleware: [
+    requestSpan,
     webAnalytics,
     ...Option.match(SEARCH_INDEX_ORIGIN, {
       onNone: () => [noindex],
       onSome: () => [],
     }),
   ],
+  functionMiddleware: [serverFnSpan],
 }));
 
 export { startInstance };
