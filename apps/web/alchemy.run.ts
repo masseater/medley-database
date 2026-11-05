@@ -6,8 +6,6 @@ import { Effect } from "effect";
 import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 import { SITE_HOST } from "./src/shared/config/index.ts";
 
-const TRACE_SAMPLING_RATE = 0.1;
-
 const COMPATIBILITY = { date: "2026-08-25" } as const;
 const CF_BEACON_TOKEN = "ad561fe157a84abb89c547d547524e9f";
 
@@ -26,7 +24,7 @@ const web = Effect.gen(function* web() {
         invocationLogs: true,
         persist: true,
       },
-      traces: { enabled: true, headSamplingRate: TRACE_SAMPLING_RATE, persist: true },
+      traces: { enabled: true, persist: true },
     },
     viteEnvironments: { entry: "ssr", children: ["rsc"] },
   });

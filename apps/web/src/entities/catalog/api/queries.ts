@@ -5,15 +5,15 @@ import { browserClient, createQueries, serverClient } from "#/shared/api";
 
 import type { CatalogRoutes } from "./routes.server";
 
-const loadCatalogRoutes = (): Promise<CatalogRoutes> =>
+const loadCatalogHandle = (): Promise<(request: Request) => Promise<Response>> =>
   Effect.runPromise(
-    Effect.promise(() => import("./routes.server")).pipe(
-      Effect.map((module) => module.catalogRoutes),
+    Effect.promise(() => import("./handle.server")).pipe(
+      Effect.map((module) => module.handleCatalog),
     ),
   );
 
 const client = createIsomorphicFn()
-  .server(() => serverClient<CatalogRoutes>(loadCatalogRoutes))
+  .server(() => serverClient<CatalogRoutes>(loadCatalogHandle))
   .client(() => browserClient<CatalogRoutes>());
 
 const catalogQueries = createQueries<CatalogRoutes>(client()).api.catalog;
