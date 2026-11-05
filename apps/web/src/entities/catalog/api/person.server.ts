@@ -16,29 +16,28 @@ const byVideoThenPosition = Order.combine(
 );
 
 const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
-  const found = Option.fromUndefinedOr(
-    yield* Effect.promise(() =>
-      catalogDb.query.person.findFirst({
-        columns: { id: true, name: true },
-        with: {
-          aliases: { columns: { alias: true } },
-          credits: {
-            columns: { role: true },
-            with: {
-              part: {
-                columns: { id: true, position: true, label: true },
-                with: {
-                  song: { columns: { id: true, title: true } },
-                  video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } },
-                },
+  const promiseResult = yield* Effect.promise(() =>
+    catalogDb.query.person.findFirst({
+      columns: { id: true, name: true },
+      with: {
+        aliases: { columns: { alias: true } },
+        credits: {
+          columns: { role: true },
+          with: {
+            part: {
+              columns: { id: true, position: true, label: true },
+              with: {
+                song: { columns: { id: true, title: true } },
+                video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } },
               },
             },
           },
         },
-        where: { id },
-      }),
-    ),
+      },
+      where: { id },
+    }),
   );
+  const found = Option.fromUndefinedOr(promiseResult);
   return found.pipe(
     Option.map((person) => ({
       id: person.id,

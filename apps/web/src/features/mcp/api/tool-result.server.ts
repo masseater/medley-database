@@ -1,5 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/server";
-import { Effect, Option, Predicate } from "effect";
+import { Effect, Option, Predicate, Schema } from "effect";
 
 import { runRequest } from "#/shared/observability/index.server";
 
@@ -7,8 +7,10 @@ import { ToolError } from "./tool-error";
 
 const UNKNOWN_FAILURE = "database rejected the change";
 
-const jsonResult = (value: unknown): CallToolResult => ({
-  content: [{ type: "text", text: JSON.stringify(value) }],
+const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
+
+const textResult = (text: string): CallToolResult => ({
+  content: [{ type: "text", text }],
 });
 
 const errorResult = ({ message }: Readonly<{ message: string }>): CallToolResult => ({
@@ -17,7 +19,12 @@ const errorResult = ({ message }: Readonly<{ message: string }>): CallToolResult
 });
 
 const runTool = <Value>(effect: Effect.Effect<Value, ToolError>): Promise<CallToolResult> =>
-  runRequest(effect.pipe(Effect.match({ onFailure: errorResult, onSuccess: jsonResult })));
+  runRequest(
+    effect.pipe(
+      Effect.flatMap(encodeJson),
+      Effect.match({ onFailure: errorResult, onSuccess: textResult }),
+    ),
+  );
 
 const messageOf = (cause: unknown): string =>
   Option.liftPredicate(cause, Predicate.isError).pipe(

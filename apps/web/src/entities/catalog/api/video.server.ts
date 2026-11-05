@@ -20,41 +20,40 @@ const byTitle = Order.make<Readonly<{ title: string }>>((left, right) =>
 );
 
 const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
-  const found = Option.fromUndefinedOr(
-    yield* Effect.promise(() =>
-      catalogDb.query.video.findFirst({
-        columns: VIDEO_COLUMNS,
-        with: {
-          parts: {
-            columns: {
-              id: true,
-              position: true,
-              label: true,
-              bpm: true,
-              bars: true,
-              startSec: true,
-              note: true,
-              comment: true,
-            },
-            with: {
-              song: { columns: { id: true, title: true } },
-              refVideo: { columns: { id: true, title: true } },
-              staff: {
-                columns: { role: true },
-                with: { person: { columns: { id: true, name: true } } },
-              },
-            },
-            orderBy: { position: "asc" },
+  const promiseResult = yield* Effect.promise(() =>
+    catalogDb.query.video.findFirst({
+      columns: VIDEO_COLUMNS,
+      with: {
+        parts: {
+          columns: {
+            id: true,
+            position: true,
+            label: true,
+            bpm: true,
+            bars: true,
+            startSec: true,
+            note: true,
+            comment: true,
           },
-          quotedBy: {
-            columns: { id: true },
-            with: { video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } } },
+          with: {
+            song: { columns: { id: true, title: true } },
+            refVideo: { columns: { id: true, title: true } },
+            staff: {
+              columns: { role: true },
+              with: { person: { columns: { id: true, name: true } } },
+            },
           },
+          orderBy: { position: "asc" },
         },
-        where: { id },
-      }),
-    ),
+        quotedBy: {
+          columns: { id: true },
+          with: { video: { columns: { id: true, title: true, kind: true, thumbnailUrl: true } } },
+        },
+      },
+      where: { id },
+    }),
   );
+  const found = Option.fromUndefinedOr(promiseResult);
   return found.pipe(
     Option.map(
       Struct.evolve({
