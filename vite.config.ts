@@ -20,6 +20,7 @@ import {
   restrictedImports,
   ruleNamesOf,
   rulesMissingFrom,
+  workerRules,
 } from "./lint.config.ts";
 
 const reactHooksRules = renamedRulesOf({
@@ -193,7 +194,7 @@ export default defineConfig({
       },
       {
         files: ["apps/web/src/**/*.{ts,tsx}"],
-        rules: decisionRules,
+        rules: { ...decisionRules, ...workerRules },
       },
       {
         files: ["**/*.test.ts"],

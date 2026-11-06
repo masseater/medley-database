@@ -42,7 +42,7 @@ catalog:
   "@fontsource/m-plus-rounded-1c": 5.3.0
 catalogs:
   stack:
-    "@r_masseater/workers-tracing": 0.0.7
+    "@r_masseater/workers-tracing": 0.1.0
     "@distilled.cloud/cloudflare": 1.0.0-rc.18
     "@effect/atom-react": 4.1.2
     "@effect/tsgo": 0.64.1
@@ -97,7 +97,7 @@ packageExtensions:
 patchedDependencies:
   "@better-auth/oauth-provider@1.7.17": patches/@better-auth__oauth-provider@1.7.17.patch
 minimumReleaseAgeExclude:
-  - "@r_masseater/workers-tracing@0.0.7"
+  - "@r_masseater/workers-tracing@0.1.0"
   - "better-auth@1.7.17"
   - "auth@1.7.17"
   - "@better-auth/core@1.7.17"

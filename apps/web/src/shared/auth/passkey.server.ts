@@ -1,4 +1,5 @@
 import { passkey } from "@better-auth/passkey";
+import { run } from "@r_masseater/workers-tracing/effect";
 import { APIError } from "better-auth/api";
 import { generateRandomString, verifyPassword } from "better-auth/crypto";
 import { Effect, Option } from "effect";
@@ -54,13 +55,13 @@ const adminPasskey = passkey({
   registration: {
     requireSession: false,
     resolveUser: ({ ctx, context }) =>
-      Effect.runPromise(
+      run(
         requireAdminInvite(context, () => ctx.context.adapter.count({ model: "passkey" })).pipe(
           Effect.map(pendingAdmin),
         ),
       ),
     afterVerification: ({ ctx, user, context }) =>
-      Effect.runPromise(
+      run(
         Effect.promise(() => ctx.context.internalAdapter.findUserById(user.id)).pipe(
           Effect.flatMap((existing) =>
             Option.match(Option.fromNullishOr(existing), {

@@ -1,3 +1,4 @@
+import { run } from "@r_masseater/workers-tracing/effect";
 import { requestSpan, serverFnSpan } from "@r_masseater/workers-tracing/tanstack-start";
 import { createMiddleware, createStart } from "@tanstack/react-start";
 import { Effect, Option } from "effect";
@@ -6,7 +7,7 @@ import { withWebAnalytics } from "#/app/server/web-analytics.server";
 import { SEARCH_INDEX_ORIGIN } from "#/shared/config";
 
 const noindex = createMiddleware().server(({ next }) =>
-  Effect.runPromise(
+  run(
     Effect.promise(() => Promise.resolve(next())).pipe(
       Effect.map(({ response }) => {
         const unindexed = new Response(response.body, response);
@@ -18,7 +19,7 @@ const noindex = createMiddleware().server(({ next }) =>
 );
 
 const webAnalytics = createMiddleware().server(({ next }) =>
-  Effect.runPromise(
+  run(
     Effect.promise(() => Promise.resolve(next())).pipe(
       Effect.map(({ response }) => withWebAnalytics(response)),
     ),
