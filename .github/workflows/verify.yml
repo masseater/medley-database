@@ -18,7 +18,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@0c9f2c316a486637e22878aea5e0a4a1a7f630c4
+      - uses: masseater/typescript-template/.github/actions/verify@efe45eab5cdebb68c802540c86c2f229c67220fa
         with:
           github-token: ${{ github.token }}
 
@@ -65,7 +65,7 @@ jobs:
       - if: steps.head.outputs.latest == 'true'
         uses: $/.github/actions/setup
       - if: steps.head.outputs.latest == 'true'
-        uses: masseater/typescript-template/.github/actions/credentials@0c9f2c316a486637e22878aea5e0a4a1a7f630c4
+        uses: masseater/typescript-template/.github/actions/credentials@efe45eab5cdebb68c802540c86c2f229c67220fa
       - if: steps.head.outputs.latest == 'true'
         run: vp exec alchemy deploy --stage production --yes
         working-directory: apps/web
@@ -82,7 +82,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/credentials@0c9f2c316a486637e22878aea5e0a4a1a7f630c4
+      - uses: masseater/typescript-template/.github/actions/credentials@efe45eab5cdebb68c802540c86c2f229c67220fa
       - run: >-
           vp exec workers-traces --request https://medley-manager.masseater.dev/
           --expect GET --expect catalog.stats --expect d1_all --wait 300
@@ -121,6 +121,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@0c9f2c316a486637e22878aea5e0a4a1a7f630c4
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@efe45eab5cdebb68c802540c86c2f229c67220fa
         with:
           github-token: ${{ github.token }}
