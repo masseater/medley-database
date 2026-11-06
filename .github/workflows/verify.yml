@@ -87,6 +87,8 @@ jobs:
           vp exec workers-traces --request https://medley-manager.masseater.dev/
           --expect GET --expect catalog.stats --expect d1_all --wait 300
         working-directory: apps/web
+        env:
+          WORKERS_TRACES_SINK: masseater-dev-trace-sink
 
   release:
     needs: verify
