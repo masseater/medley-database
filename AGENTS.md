@@ -2,7 +2,7 @@
 
 ## コマンド
 
-- `vp run verify` は、ルートの `vp check` にテスト・steiger・`db:check`・fallow・gitleaks・audit などの検査を束ねたタスクである。pre-push フックと Stop フックも同じ verify を走らせる。
+- `vp run verify` は、ルートの `vp check` にテスト・steiger・`db:check`・fallow・betterleaks・audit などの検査を束ねたタスクである。pre-push フックと Stop フックも同じ verify を走らせる。
 - テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
 - D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを `drizzle/` に作る。better-auth のテーブルは `vp run auth:generate` で生成する。
 
