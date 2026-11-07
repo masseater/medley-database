@@ -51,7 +51,7 @@ jobs:
       queue: max
     steps:
       - id: head
-        uses: masseater/typescript-template/.github/actions/latest-verified@b634b841fef32c20d1d970bacd1d113532cf8dc4
+        uses: masseater/typescript-template/.github/actions/latest-verified@68becbb0934725055f1c657f1e77a529f0e3e338
         with:
           github-token: ${{ github.token }}
       - if: steps.head.outputs.latest == 'true'
