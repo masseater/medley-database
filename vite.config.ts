@@ -265,7 +265,6 @@ export default defineConfig({
           "steiger",
           "db-check-all",
           "fallow",
-          "gitleaks",
           "audit",
         ],
       },
@@ -278,8 +277,14 @@ export default defineConfig({
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',
         cache: false,
       },
-      gitleaks: {
-        command: "go run github.com/zricethezav/gitleaks/v8@v8.30.1 git --redact --no-banner",
+      betterleaks: {
+        command:
+          'go run github.com/betterleaks/betterleaks/v2@v2.0.0-rc.7 git . --config .betterleaks.toml --redact --no-banner --revision="$(git rev-parse -q --verify "$BETTERLEAKS_BASE" || echo origin/main)..HEAD"',
+        cache: false,
+      },
+      "betterleaks:staged": {
+        command:
+          "git diff --cached --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ | go run github.com/betterleaks/betterleaks/v2@v2.0.0-rc.7 stdin --git-diff --config .betterleaks.toml --redact --no-banner",
         cache: false,
       },
     },
