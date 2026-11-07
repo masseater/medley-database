@@ -1,5 +1,7 @@
 # medley-manager
 
+このリポジトリは [masseater/masseater.dev](https://github.com/masseater/masseater.dev) の `apps/medley-manager` に移り、アーカイブされた。
+
 メドDB は、ニコメド（ニコニコメドレー）や合作動画で、どの曲や動画が素材として使われたかを逆引きできるサービスである。
 ある曲を使ったメドレーや合作を、別の動画を引用した間接的な使用まで含めて探せる。
 
